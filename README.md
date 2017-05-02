@@ -1,2 +1,2 @@
 # lijast
-LIbrary for JavaSctipt Testing - мой велосипед для тестирования javascript кода.
+LIbrary for JAvaSctipt Testing - мой велосипед для тестирования javascript кода.
