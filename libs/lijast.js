@@ -1,77 +1,41 @@
 'use strict';
 
+
+
 function _t()
 {
-  let globalAll = 0;
-  let globalFail = 0;
-  let globalPass = 0;
+  let cases = [];
 
-  let currentName = '';
-  let currentAll = 0;
-  let currentFail = 0;
-  let currentPass = 0;
-
-  function assert(value1, value2)
+  this.addCase = function(name, values)
   {
-    if(value1 === value2)
-    {
-      return 0;
-    }
-    return 1;
+
   };
 
-  this.runTest = function(name, actual, expected)
+  this.setChecker = function(func)
   {
-    const result = assert(actual, expected);
-    if(result === 0)
-    {
-      console.log("test " + name + " done");
-      currentPass++;
-    }
-    else
-    {
-      console.log("test " + name + " fail!");
-      currentFail++;
-    }
-    currentAll++;
+
   };
 
-  this.startTests = function(name)
+  this.run = function()
   {
-    currentAll = 0;
-    currentFail = 0;
-    currentPass = 0;
-    currentName = name;
-    console.log('start tests ' + name);
-  }
+    //проверка полей объекта values и аргументов функции setChecker
+    //проверка задания имён кейсов
 
-  this.endTests = function()
-  {
-    globalAll += currentAll;
-    globalFail += currentFail;
-    globalPass += currentPass;
-    console.log("test " + currentName +
-    " pass="+ currentPass +
-    " fail=" + currentFail);
-  }
+    //запуск цикла кейсов
+  };
 
-  this.startGlobalTests = function()
+  this.isEqual = function(actual, expected)
   {
-    globalAll = 0;
-    globalFail = 0;
-    globalPass = 0;
-    console.log('start tests');
-  }
 
-  this.endGlobalTests = function()
+  };
+
+  this.verify = function(actual)
   {
-    console.log("all test=" + globalAll +
-    " pass="+ globalPass +
-    " fail=" + globalFail);
-  }
+
+  };
 };
 
-export function Test()
+export function lijast()
 {
   return new _t();
 };
