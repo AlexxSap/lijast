@@ -9,7 +9,7 @@ import {sum, isEqual} from "../src/sum";
   _.addCase('simple1', {first: 1, second: 3,   expected: 4 });
   _.addCase('simple2', {first: 0, second: 666, expected: 666 });
   _.addCase('simple3', {first: 1, second: 666, expected: 666 });
-  _.addCase('simple4', {first: 1, second: 1, expected: 2 });
+  _.addCase('simple4', {expected: 2, first: 1, second: 1 });
 
   _.setChecker(function({first, second, expected})
   {
@@ -26,7 +26,7 @@ import {sum, isEqual} from "../src/sum";
   another.addCase('equals values', {left: 1, right: 1});
   another.addCase('not equals values', {left: 1, right: 3});
 
-  another.setChecker(function({left, right})
+  another.setChecker(function({right, left})
   {
     another.verify(isEqual(left, right) === true);
   });

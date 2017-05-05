@@ -35,6 +35,8 @@ class _t
       this.currentName = this.names[index];
       let params = this.cases[index];
 
+      this.currentResult = true;
+
       this.func(params);
 
       if(this.currentResult === true)
