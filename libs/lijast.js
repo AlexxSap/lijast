@@ -5,6 +5,11 @@ class _t
   constructor(testedName)
   {
     this.testedName = testedName;
+    this.init();
+  }
+
+  init()
+  {
     this.cases = [];
     this.names = [];
     this.currentName = '';
@@ -15,11 +20,6 @@ class _t
   {
       this.names.push(name);
       this.cases.push(values);
-  }
-
-  setChecker(func)
-  {
-    this.func = func;
   }
 
   run()
@@ -57,6 +57,13 @@ class _t
 
     console.log(`Totals: ${this.passed} passed, ${this.failed} failed`);
     console.log(`---------- finished testing of ${this.testedName} ----------`);
+  }
+
+  setChecker(func)
+  {
+    this.func = func;
+    this.run();
+    this.init();
   }
 
   isEqual(actual, expected)
