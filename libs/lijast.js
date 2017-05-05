@@ -24,11 +24,14 @@ class _t
 
   run()
   {
+    this.passed = 0;
+    this.failed = 0;
     //проверка полей объекта values и аргументов функции setChecker
+
+    console.log(`---------- start testing of ${this.testedName} ----------`);
 
     for(let index = 0; index < this.names.length; index++)
     {
-
       this.currentName = this.names[index];
       let params = this.cases[index];
 
@@ -36,33 +39,33 @@ class _t
 
       if(this.currentResult === true)
       {
+        this.passed++;
         console.log('\x1b[32m%s\x1b[0m', 'PASS!',
         this.testedName + ':' + this.currentName);
       }
       else
       {
+        this.failed++;
         console.log('\x1b[31m%s\x1b[0m', 'FAIL!',
         this.testedName + ':' + this.currentName);
         console.log(`   actual  : ${this.currentActual}`);
         console.log(`   expected: ${this.currentExpected}`);
       }
     }
+
+    console.log(`Totals: ${this.passed} passed, ${this.failed} failed`);
+    console.log(`---------- finished testing of ${this.testedName} ----------`);
   }
 
   isEqual(actual, expected)
   {
-
     if(this.currentResult === true)
     {
-      if(actual === expected)
+      if(actual !== expected)
       {
-        this.currentExpected = expected;
-      }
-      else
-      {
-        this.currentResult = true;
-        this.currentActual = actual;
         this.currentResult = false;
+        this.currentActual = false;
+        this.currentExpected = true;
       }
     }
   }
@@ -71,15 +74,13 @@ class _t
   {
     if(this.currentResult === true)
     {
-        this.currentResult = actual;
+      if(actual === false)
+      {
+        this.currentResult = false;
+        this.currentActual = false;
+        this.currentExpected = true;
+      }
     }
-    else
-    {
-      this.currentResult = false;
-      this.currentActual = actual;
-      this.currentExpected = true;
-    }
-
   }
 };
 
