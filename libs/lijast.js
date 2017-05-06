@@ -30,7 +30,7 @@ class Skipped extends Error
   }
 };
 
-class _t
+export class Lijast
 {
   constructor()
   {
@@ -78,6 +78,7 @@ class _t
         {
           console.log(`SKIP \'${this.currentName}\' with \'${e.message}\'`);
           this.skipped++;
+          Lijast.totalSkipped++;
           continue;
         }
       }
@@ -100,6 +101,9 @@ class _t
     }
 
     this.time = new Date() - this.time;
+
+    Lijast.totalPassed += this.passed;
+    Lijast.totalFailed += this.failed;
 
     const color = this.failed == 0 ? '\x1b[32m' : '\x1b[31m';
     console.log(color + '%s\x1b[0m',
@@ -148,9 +152,19 @@ class _t
   {
     throw new Skipped(message);
   }
+
+  static totalInfo()
+  {
+    const color = Lijast.totalFailed == 0 ? '\x1b[32m' : '\x1b[31m'
+    console.log(color + '%s\x1b[0m', `Testing result: ${Lijast.totalPassed} passed, ${Lijast.totalFailed} failed, ${Lijast.totalSkipped } skipped`);
+  }
+
+  static create(testedName)
+  {
+    return new Lijast(testedName);
+  }
 };
 
-export function lijast(testedName)
-{
-  return new _t(testedName);
-};
+Lijast.totalPassed = 0;
+Lijast.totalFailed = 0;
+Lijast.totalSkipped = 0;
