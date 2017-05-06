@@ -59,7 +59,7 @@ export class Lijast
 
     this.time = new Date();
 
-    console.log(`Start testing of ${this.testedName}`);
+    console.log(`Start testing of \'${this.testedName}\'`);
 
     for(let index = 0; index < this.names.length; index++)
     {
