@@ -8,7 +8,6 @@ export function TestIsEqual()
   let _ = Lijast.create();
 
   _.addCase('equals values', {left: 1, right: 1});
-  _.addCase('not equals values', {right: 1, left: 3});
 
   _.setChecker('tests for isEqual', function({right, left})
   {

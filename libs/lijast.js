@@ -178,7 +178,7 @@ export class Lijast
 
   static totalInfo()
   {
-    const color = Lijast.totalFailed == 0 ? '\x1b[32m' : '\x1b[31m'
+    const color = Lijast.totalFailed == 0 ? '\x1b[32m' : '\x1b[31m';
     console.log(color + '%s\x1b[0m', `Testing result: ${Lijast.totalPassed} passed, ${Lijast.totalFailed} failed, ${Lijast.totalSkipped } skipped`);
   }
 

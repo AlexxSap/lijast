@@ -1,6 +1,6 @@
 'use strict';
 
-function getArgumentsArray(func)
+export function getArgumentsArray(func)
 {
   const str = func.toString();
   let pattern = '';
@@ -39,7 +39,7 @@ function getArgumentsArray(func)
 
 import {Lijast} from "../libs/lijast";
 
-export function test()
+export function TestGetArgumentsArray()
 {
   let _ = Lijast.create();
 
@@ -54,4 +54,4 @@ export function test()
   });
 };
 
-test();
+//TestGetArgumentsArray();
