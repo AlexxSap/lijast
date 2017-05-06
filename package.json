@@ -16,9 +16,9 @@
     "type": "git",
     "url": "git+https://github.com/AlexxSap/lijast.git"
   },
-  
+
   "author": "AlexxSap",
-  "license": "ISC",
+  "license": "GNU LGPL v3",
   "bugs": {
     "url": "https://github.com/AlexxSap/lijast/issues"
   },

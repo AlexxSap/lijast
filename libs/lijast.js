@@ -26,6 +26,8 @@ class _t
     this.passed = 0;
     this.failed = 0;
 
+    this.time = new Date();
+
     console.log(`Start testing of ${this.testedName}`);
 
     for(let index = 0; index < this.names.length; index++)
@@ -52,8 +54,13 @@ class _t
       }
     }
 
-    console.log(`Totals: ${this.passed} passed, ${this.failed} failed`);
-    console.log(`Finished testing of ${this.testedName}`);
+    this.time = new Date() - this.time;
+
+    const color = this.failed == 0 ? '\x1b[32m' : '\x1b[31m';
+    console.log(color + '%s\x1b[0m',
+      `Totals: ${this.passed} passed, ${this.failed} failed`);
+
+    console.log(`Finished testing of \'${this.testedName}\' for ${this.time} ms`);
   }
 
   setChecker(testedName, func)
