@@ -1,5 +1,35 @@
 'use strict';
 
+class IsNotEquals extends Error
+{
+  constructor()
+  {
+    super();
+    this.name = 'IsNotEquals';
+    this.message = 'isEquals return fail';
+  }
+};
+
+class NotVerify extends Error
+{
+  constructor()
+  {
+    super();
+    this.name = 'NotVerify';
+    this.message = 'verify return fail';
+  }
+};
+
+class Skipped extends Error
+{
+  constructor(message)
+  {
+    super();
+    this.name = 'skipped';
+    this.message = message;
+  }
+};
+
 class _t
 {
   constructor()
@@ -25,6 +55,7 @@ class _t
   {
     this.passed = 0;
     this.failed = 0;
+    this.skipped = 0;
 
     this.time = new Date();
 
@@ -36,29 +67,43 @@ class _t
       let params = this.cases[index];
 
       this.currentResult = true;
-      this.func(params);
 
-      const testString = `${this.testedName}(${this.currentName})`;
+      try
+      {
+        this.func(params);
+      }
+      catch(e)
+      {
+        if(e.name === 'skipped')
+        {
+          console.log(`SKIP \'${this.currentName}\' with \'${e.message}\'`);
+          this.skipped++;
+          continue;
+        }
+      }
 
-      if(this.currentResult === true)
-      {
-        this.passed++;
-        console.log('\x1b[32m%s\x1b[0m', 'PASS!', testString);
-      }
-      else
-      {
-        this.failed++;
-        console.log('\x1b[31m%s\x1b[0m', 'FAIL!', testString);
-        console.log(`   actual  : ${this.currentActual}`);
-        console.log(`   expected: ${this.currentExpected}`);
-      }
+        const testString = `${this.testedName}(${this.currentName})`;
+
+        if(this.currentResult === true)
+        {
+          this.passed++;
+          console.log('\x1b[32m%s\x1b[0m', 'PASS!', testString);
+        }
+        else
+        {
+          this.failed++;
+          console.log('\x1b[31m%s\x1b[0m', 'FAIL!', testString);
+          console.log(`   actual  : ${this.currentActual}`);
+          console.log(`   expected: ${this.currentExpected}`);
+        }
+
     }
 
     this.time = new Date() - this.time;
 
     const color = this.failed == 0 ? '\x1b[32m' : '\x1b[31m';
     console.log(color + '%s\x1b[0m',
-      `Totals: ${this.passed} passed, ${this.failed} failed`);
+      `Totals: ${this.passed} passed, ${this.failed} failed, ${this.skipped} skipped`);
 
     console.log(`Finished testing of \'${this.testedName}\' for ${this.time} ms`);
   }
@@ -80,6 +125,7 @@ class _t
         this.currentResult = false;
         this.currentActual = actual;
         this.currentExpected = expected;
+        throw new IsNotEquals();
       }
     }
   }
@@ -93,8 +139,14 @@ class _t
         this.currentResult = false;
         this.currentActual = false;
         this.currentExpected = true;
+        throw new NotVerify();
       }
     }
+  }
+
+  skip(message)
+  {
+    throw new Skipped(message);
   }
 };
 
