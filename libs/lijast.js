@@ -124,7 +124,30 @@ export class Lijast
   {
     if(this.currentResult === true)
     {
-      if(actual !== expected)
+      if(Array.isArray(actual) && Array.isArray(expected))
+      {
+        if(actual.length == expected.length)
+        {
+          for(let index = 0; index < actual.length; index++)
+          {
+            if(actual[index] !== expected[index])
+            {
+              this.currentResult = false;
+              this.currentActual = actual;
+              this.currentExpected = expected;
+              throw new IsNotEquals();
+            }
+          }
+        }
+        else
+        {
+          this.currentResult = false;
+          this.currentActual = actual;
+          this.currentExpected = expected;
+          throw new IsNotEquals();
+        }
+      }
+      else if(actual !== expected)
       {
         this.currentResult = false;
         this.currentActual = actual;
