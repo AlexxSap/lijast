@@ -1,5 +1,74 @@
 'use strict';
 
+function getArgumentsArray(func)
+{
+  const str = func.toString();
+
+  let pattern = '';
+  {
+    const start = str.indexOf('(', 0) + 1;
+    const end = str.indexOf(')', start + 1);
+    pattern = ' ' + str.slice(start, end) + '.';
+  }
+
+  let pos = 0;
+  let result = [];
+
+  while(true)
+  {
+    let start = str.indexOf(pattern, pos);
+
+    if(start == -1)
+    {
+      break;
+    }
+
+    start += pattern.length;
+    let end = str.indexOf(',', start);
+    let end2 = str.indexOf(';', start);
+
+    if(end == -1)
+    {
+      end = end2;
+    }
+    else if(end2 < end)
+    {
+      end = end2;
+    }
+
+    let substr = str.slice(start, end);
+    result.push(substr);
+
+    pos = end + 1;
+  }
+
+  return result;
+};
+
+function checkParameters(func, params)
+{
+  let funcArguments = getArgumentsArray(func);
+  let paramsKeys = Object.keys(params);
+
+  if(funcArguments.length != paramsKeys.length)
+  {
+    return false;
+  }
+
+  funcArguments.sort();
+  paramsKeys.sort();
+
+  for(let index = 0; index < paramsKeys.length; index++)
+  {
+    if(funcArguments[index] !== paramsKeys[index])
+    {
+      return false;
+    }
+  }
+
+  return true;
+};
+
 class IsNotEquals extends Error
 {
   constructor()
@@ -27,6 +96,16 @@ class Skipped extends Error
     super();
     this.name = 'skipped';
     this.message = message;
+  }
+};
+
+class ParametersMistmatch extends Error
+{
+  constructor(message)
+  {
+    super();
+    this.name = 'parametersMistmatch';
+    this.message = 'parameters mistmatch';
   }
 };
 
@@ -70,7 +149,15 @@ export class Lijast
 
       try
       {
-        this.func(params);
+        if(checkParameters(this.func, params))
+        {
+          this.func(params);
+        }
+        else
+        {
+          this.parametersMistmatch();
+        }
+
       }
       catch(e)
       {
@@ -79,6 +166,12 @@ export class Lijast
           console.log(`SKIP \'${this.currentName}\' with \'${e.message}\'`);
           this.skipped++;
           Lijast.totalSkipped++;
+          continue;
+        }
+        else if(e.name === 'parametersMistmatch')
+        {
+          console.log('\x1b[31m%s\x1b[0m',`FAIL! parameters mistmatch for  \'${this.currentName}\'`);
+          this.failed++;
           continue;
         }
       }
@@ -175,6 +268,12 @@ export class Lijast
   {
     throw new Skipped(message);
   }
+
+  parametersMistmatch()
+  {
+    throw new ParametersMistmatch();
+  }
+
 
   static totalInfo()
   {

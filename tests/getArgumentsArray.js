@@ -3,6 +3,7 @@
 export function getArgumentsArray(func)
 {
   const str = func.toString();
+
   let pattern = '';
   {
     const start = str.indexOf('(', 0) + 1;
@@ -12,6 +13,7 @@ export function getArgumentsArray(func)
 
   let pos = 0;
   let result = [];
+
   while(true)
   {
     let start = str.indexOf(pattern, pos);
@@ -23,14 +25,20 @@ export function getArgumentsArray(func)
 
     start += pattern.length;
     let end = str.indexOf(',', start);
+    let end2 = str.indexOf(';', start);
 
     if(end == -1)
     {
-      end = str.indexOf(';', start);
+      end = end2;
+    }
+    else if(end2 < end)
+    {
+      end = end2;
     }
 
     let substr = str.slice(start, end);
     result.push(substr);
+
     pos = end + 1;
   }
 
@@ -48,10 +56,20 @@ export function TestGetArgumentsArray()
   _.addCase('parameter-3', {func: function({param}){}, expected: ['param']});
   _.addCase('parameter-4', {func: function({first, second, expected}){}, expected: ['first', 'second', 'expected']});
 
+  _.addCase('from-sum', {func: function({first, second, expected})
+  {
+      if(first == second)
+      {
+        _.skip('equals values');
+      }
+      const actual = sum(first, second);
+      _.isEqual(actual, expected);
+  }, expected: ['first', 'second', 'expected']});
+
   _.setChecker('tests for getArgumentsArray', function({func, expected})
   {
     _.isEqual(getArgumentsArray(func), expected);
   });
 };
 
-//TestGetArgumentsArray();
+// TestGetArgumentsArray();

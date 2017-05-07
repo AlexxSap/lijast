@@ -7,10 +7,11 @@ export function TestSum()
 {
   let _ = Lijast.create();
 
-  _.addCase('simple1', {first: 1, second: 3,   expected: 4 });
+  _.addCase('simple1', {first: 1, second: 3,  expected: 4 });
   _.addCase('simple2', {first: 0, second: 666, expected: 666 });
   _.addCase('simpleEqual', {first: 1, second: 1, expected: 666 });
   _.addCase('simple4', {expected: 4, first: 3, second: 1 });
+  _.addCase('params-mistmatch-1', {expected: 4, first: 3});
 
   _.setChecker('tests for sum', function({first, second, expected})
   {
@@ -22,3 +23,5 @@ export function TestSum()
     _.isEqual(actual, expected);
   });
 }
+
+// TestSum();

@@ -53,10 +53,29 @@ export function TestCheckParameters()
   _.addCase('complex-fail-2',
    {func: function({first, second, expected}){}, params: {first: 1, expected: 2}, result: false});
 
+   _.addCase('array',
+    {func: function({data}){return data;}, params: {data: [1,2,3]}, result: true});
+
+  _.addCase('object',
+     {func: function({data}){return data;}, params: {data: {name: 'vasia'}}, result: true});
+
+  _.addCase('object-array',
+      {func: function({obj, arr}){}, params: {arr: [1,2,3], obj: {name: 'vasia'}}, result: true});
+
+  _.addCase('from-sum', {func: function({first, second, expected})
+      {
+          if(first == second)
+          {
+            _.skip('equals values');
+          }
+          const actual = sum(first, second);
+          _.isEqual(actual, expected);
+      }, params: {first: 1, second: 2, expected: 3}, result: true});
+
   _.setChecker('tests for checkParameters', function({func, params, result})
   {
     _.verify(checkParameters(func, params) == result);
   });
 };
 
-//TestCheckParameters();
+// TestCheckParameters();
