@@ -109,6 +109,16 @@ class ParametersMistmatch extends Error
   }
 };
 
+class Failed extends Error
+{
+  constructor(message)
+  {
+    super();
+    this.name = 'failed';
+    this.message = message;
+  }
+};
+
 export class Lijast
 {
   constructor()
@@ -171,6 +181,12 @@ export class Lijast
         else if(e.name === 'parametersMistmatch')
         {
           console.log('\x1b[31m%s\x1b[0m',`FAIL! parameters mistmatch for  \'${this.currentName}\'`);
+          this.failed++;
+          continue;
+        }
+        else if(e.name === 'failed')
+        {
+          console.log('\x1b[31m%s\x1b[0m',`FAIL! \'${this.currentName}\' with \'${e.message}\'`);
           this.failed++;
           continue;
         }
@@ -267,6 +283,11 @@ export class Lijast
   skip(message)
   {
     throw new Skipped(message);
+  }
+
+  fail(message)
+  {
+    throw new Failed(message);
   }
 
   parametersMistmatch()
