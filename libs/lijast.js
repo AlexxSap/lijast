@@ -229,26 +229,36 @@ export class Lijast
     this.init();
   }
 
-  isEqual(actual, expected)
+  isEqual(actual, expected, comparator)
   {
     if(this.currentResult === true)
     {
-      if(Array.isArray(actual) && Array.isArray(expected))
+      if(comparator == undefined)
       {
-        if(actual.length == expected.length)
+        if(Array.isArray(actual) && Array.isArray(expected))
         {
-          for(let index = 0; index < actual.length; index++)
+          if(actual.length == expected.length)
           {
-            if(actual[index] !== expected[index])
+            for(let index = 0; index < actual.length; index++)
             {
-              this.currentResult = false;
-              this.currentActual = actual;
-              this.currentExpected = expected;
-              throw new IsNotEquals();
+              if(actual[index] !== expected[index])
+              {
+                this.currentResult = false;
+                this.currentActual = actual;
+                this.currentExpected = expected;
+                throw new IsNotEquals();
+              }
             }
           }
+          else
+          {
+            this.currentResult = false;
+            this.currentActual = actual;
+            this.currentExpected = expected;
+            throw new IsNotEquals();
+          }
         }
-        else
+        else if(actual !== expected)
         {
           this.currentResult = false;
           this.currentActual = actual;
@@ -256,12 +266,9 @@ export class Lijast
           throw new IsNotEquals();
         }
       }
-      else if(actual !== expected)
+      else
       {
-        this.currentResult = false;
-        this.currentActual = actual;
-        this.currentExpected = expected;
-        throw new IsNotEquals();
+          this.verify(comparator(actual, expected));
       }
     }
   }
