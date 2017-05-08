@@ -69,6 +69,13 @@ function checkParameters(func, params)
   return true;
 };
 
+const redColor = '\x1b[31m';
+const greenColor = '\x1b[32m';
+const resetColor = '\x1b[0m';
+
+const failStartMessage = redColor + 'FAIL!' + resetColor;
+const passStartMessage = greenColor + 'PASS!' + resetColor;
+
 class IsNotEquals extends Error
 {
   constructor()
@@ -76,16 +83,6 @@ class IsNotEquals extends Error
     super();
     this.name = 'IsNotEquals';
     this.message = 'isEquals return fail';
-  }
-};
-
-class NotVerify extends Error
-{
-  constructor()
-  {
-    super();
-    this.name = 'NotVerify';
-    this.message = 'verify return fail';
   }
 };
 
@@ -118,6 +115,27 @@ class Failed extends Error
     this.message = message;
   }
 };
+
+function arraysComparator(actual, expected)
+{
+  if(actual.length == expected.length)
+  {
+    for(let index = 0; index < actual.length; index++)
+    {
+      if(actual[index] !== expected[index])
+      {
+        return false;
+      }
+    }
+  }
+  else
+  {
+      return false;
+  }
+
+  return true;
+}
+
 
 export class Lijast
 {
@@ -167,7 +185,6 @@ export class Lijast
         {
           this.parametersMistmatch();
         }
-
       }
       catch(e)
       {
@@ -180,13 +197,13 @@ export class Lijast
         }
         else if(e.name === 'parametersMistmatch')
         {
-          console.log('\x1b[31m%s\x1b[0m',`FAIL! parameters mistmatch for  \'${this.currentName}\'`);
+          console.log(failStartMessage + ` parameters mistmatch for \'${this.currentName}\'`);
           this.failed++;
           continue;
         }
         else if(e.name === 'failed')
         {
-          console.log('\x1b[31m%s\x1b[0m',`FAIL! \'${this.currentName}\' with \'${e.message}\'`);
+          console.log(failStartMessage + ` \'${this.currentName}\' with \'${e.message}\'`);
           this.failed++;
           continue;
         }
@@ -197,16 +214,15 @@ export class Lijast
         if(this.currentResult === true)
         {
           this.passed++;
-          console.log('\x1b[32m%s\x1b[0m', 'PASS!', testString);
+          console.log(passStartMessage, testString);
         }
         else
         {
           this.failed++;
-          console.log('\x1b[31m%s\x1b[0m', 'FAIL!', testString);
+          console.log(failStartMessage, testString);
           console.log(`   actual  : ${this.currentActual}`);
           console.log(`   expected: ${this.currentExpected}`);
         }
-
     }
 
     this.time = new Date() - this.time;
@@ -214,8 +230,8 @@ export class Lijast
     Lijast.totalPassed += this.passed;
     Lijast.totalFailed += this.failed;
 
-    const color = this.failed == 0 ? '\x1b[32m' : '\x1b[31m';
-    console.log(color + '%s\x1b[0m',
+    const color = this.failed == 0 ? greenColor : redColor;
+    console.log(color + '%s' + resetColor,
       `Totals: ${this.passed} passed, ${this.failed} failed, ${this.skipped} skipped`);
 
     console.log(`Finished testing of \'${this.testedName}\' for ${this.time} ms`);
@@ -231,32 +247,11 @@ export class Lijast
 
   isEqual(actual, expected, comparator)
   {
-    if(this.currentResult === true)
-    {
       if(comparator == undefined)
       {
         if(Array.isArray(actual) && Array.isArray(expected))
         {
-          if(actual.length == expected.length)
-          {
-            for(let index = 0; index < actual.length; index++)
-            {
-              if(actual[index] !== expected[index])
-              {
-                this.currentResult = false;
-                this.currentActual = actual;
-                this.currentExpected = expected;
-                throw new IsNotEquals();
-              }
-            }
-          }
-          else
-          {
-            this.currentResult = false;
-            this.currentActual = actual;
-            this.currentExpected = expected;
-            throw new IsNotEquals();
-          }
+          isEqual(actual, expected, arraysComparator);
         }
         else if(actual !== expected)
         {
@@ -270,21 +265,11 @@ export class Lijast
       {
           this.verify(comparator(actual, expected));
       }
-    }
   }
 
   verify(actual)
   {
-    if(this.currentResult === true)
-    {
-      if(actual === false)
-      {
-        this.currentResult = false;
-        this.currentActual = false;
-        this.currentExpected = true;
-        throw new NotVerify();
-      }
-    }
+    this.isEqual(actual, true);
   }
 
   skip(message)
@@ -302,11 +287,11 @@ export class Lijast
     throw new ParametersMistmatch();
   }
 
-
   static totalInfo()
   {
-    const color = Lijast.totalFailed == 0 ? '\x1b[32m' : '\x1b[31m';
-    console.log(color + '%s\x1b[0m', `Testing result: ${Lijast.totalPassed} passed, ${Lijast.totalFailed} failed, ${Lijast.totalSkipped } skipped`);
+    const color = Lijast.totalFailed == 0 ? greenColor : redColor;
+    console.log(color + '%s' + resetColor,
+    `Testing result: ${Lijast.totalPassed} passed, ${Lijast.totalFailed} failed, ${Lijast.totalSkipped } skipped`);
   }
 
   static create(testedName)
