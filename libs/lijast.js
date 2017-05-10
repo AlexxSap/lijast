@@ -137,21 +137,47 @@ function arraysComparator(actual, expected)
 }
 
 var parameters = new WeakMap();
+var names = new WeakMap();
+
+function addValueToArray(values, context, value)
+{
+  if(!values.has(context))
+  {
+    values.set(context, new Array());
+  }
+  let current = values.get(context);
+  current.push(value);
+  values.set(context, current);
+};
+
+function getValueFromArray(values, context, index)
+{
+  return values.get(context)[index];
+}
 
 function addParameters(context, value)
 {
-  if(!parameters.has(context))
-  {
-    parameters.set(context, new Array());
-  }
-  let current = parameters.get(context);
-  current.push(value);
-  parameters.set(context, current);
-};
+  addValueToArray(parameters, context, value);
+}
 
 function getParameters(context, index)
 {
-  return parameters.get(context)[index];
+  return getValueFromArray(parameters, context, index);
+}
+
+function addName(context, name)
+{
+  addValueToArray(names, context, name);
+}
+
+function getName(context, index)
+{
+  return getValueFromArray(names, context, index);
+}
+
+function getCount(context)
+{
+  return names.get(context).length;
 }
 
 export class Lijast
@@ -163,14 +189,13 @@ export class Lijast
 
   init()
   {
-    this.names = [];
     this.currentName = '';
     this.currentResult = true;
   }
 
   addCase(name, values)
   {
-      this.names.push(name);
+      addName(this, name);
       addParameters(this, values);
   }
 
@@ -184,9 +209,9 @@ export class Lijast
 
     console.log(`Start testing of \'${this.testedName}\'`);
 
-    for(let index = 0; index < this.names.length; index++)
+    for(let index = 0; index < getCount(this); index++)
     {
-      this.currentName = this.names[index];
+      this.currentName = getName(this, index);
       let params = getParameters(this, index);
 
       this.currentResult = true;
