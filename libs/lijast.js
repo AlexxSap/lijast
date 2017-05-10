@@ -136,6 +136,23 @@ function arraysComparator(actual, expected)
   return true;
 }
 
+var parameters = new WeakMap();
+
+function addParameters(context, value)
+{
+  if(!parameters.has(context))
+  {
+    parameters.set(context, new Array());
+  }
+  let current = parameters.get(context);
+  current.push(value);
+  parameters.set(context, current);
+};
+
+function getParameters(context, index)
+{
+  return parameters.get(context)[index];
+}
 
 export class Lijast
 {
@@ -146,7 +163,6 @@ export class Lijast
 
   init()
   {
-    this.cases = [];
     this.names = [];
     this.currentName = '';
     this.currentResult = true;
@@ -155,7 +171,7 @@ export class Lijast
   addCase(name, values)
   {
       this.names.push(name);
-      this.cases.push(values);
+      addParameters(this, values);
   }
 
   run()
@@ -171,7 +187,7 @@ export class Lijast
     for(let index = 0; index < this.names.length; index++)
     {
       this.currentName = this.names[index];
-      let params = this.cases[index];
+      let params = getParameters(this, index);
 
       this.currentResult = true;
 
