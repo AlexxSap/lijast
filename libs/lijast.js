@@ -201,11 +201,11 @@ export class Lijast
 
   run()
   {
-    this.passed = 0;
-    this.failed = 0;
-    this.skipped = 0;
+    let passed = 0;
+    let failed = 0;
+    let skipped = 0;
 
-    this.time = new Date();
+    let time = new Date();
 
     console.log(`Start testing of \'${this.testedName}\'`);
 
@@ -232,20 +232,20 @@ export class Lijast
         if(e.name === 'skipped')
         {
           console.log(`SKIP \'${this.currentName}\' with \'${e.message}\'`);
-          this.skipped++;
+          skipped++;
           Lijast.totalSkipped++;
           continue;
         }
         else if(e.name === 'parametersMistmatch')
         {
           console.log(failStartMessage + ` parameters mistmatch for \'${this.currentName}\'`);
-          this.failed++;
+          failed++;
           continue;
         }
         else if(e.name === 'failed')
         {
           console.log(failStartMessage + ` \'${this.currentName}\' with \'${e.message}\'`);
-          this.failed++;
+          failed++;
           continue;
         }
       }
@@ -254,28 +254,28 @@ export class Lijast
 
         if(this.currentResult === true)
         {
-          this.passed++;
+          passed++;
           console.log(passStartMessage, testString);
         }
         else
         {
-          this.failed++;
+          failed++;
           console.log(failStartMessage, testString);
           console.log(`   actual  : ${this.currentActual}`);
           console.log(`   expected: ${this.currentExpected}`);
         }
     }
 
-    this.time = new Date() - this.time;
+    time = new Date() - time;
 
-    Lijast.totalPassed += this.passed;
-    Lijast.totalFailed += this.failed;
+    Lijast.totalPassed += passed;
+    Lijast.totalFailed += failed;
 
-    const color = this.failed == 0 ? greenColor : redColor;
+    const color = failed == 0 ? greenColor : redColor;
     console.log(color + '%s' + resetColor,
-      `Totals: ${this.passed} passed, ${this.failed} failed, ${this.skipped} skipped`);
+      `Totals: ${passed} passed, ${failed} failed, ${skipped} skipped`);
 
-    console.log(`Finished testing of \'${this.testedName}\' for ${this.time} ms`);
+    console.log(`Finished testing of \'${this.testedName}\' for ${time} ms`);
   }
 
   setChecker(testedName, func)
